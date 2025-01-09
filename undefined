@@ -1,0 +1,28 @@
+```scala
+sealed trait MyValue
+case class MyInt(value: Int) extends MyValue
+case class MyString(value: String) extends MyValue
+
+class MyClass[T <: MyValue](val value: T) {
+  def myMethod(other: MyClass[T]): MyValue = {
+    (value, other.value) match {
+      case (MyInt(i), MyInt(j)) => MyInt(i + j)
+      case (MyString(s1), MyString(s2)) => MyString(s1 + s2)
+      case _ => throw new IllegalArgumentException("Unsupported types")
+    }
+  }
+}
+
+val num1 = new MyClass(MyInt(1))
+val num2 = new MyClass(MyInt(2))
+println(num1.myMethod(num2)) //MyInt(3)
+
+val str1 = new MyClass(MyString("hello"))
+val str2 = new MyClass(MyString(" world"))
+println(str1.myMethod(str2)) //MyString(hello world)
+
+// The following line will now result in a compilation error
+//val mix1 = new MyClass(MyInt(1))
+//val mix2 = new MyClass(MyString(" world"))
+//println(mix1.myMethod(mix2)) 
+```
